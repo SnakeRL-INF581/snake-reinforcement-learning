@@ -1,4 +1,4 @@
-from utils.direction import Direction
+from utils.direction import *
 import random
 from trainers.abctrainer import ABCTrainer
 import numpy as np
@@ -29,7 +29,9 @@ class QLearningTrainer(ABCTrainer):
     # Implement abstract method
     def get_state(self):
         super().get_state()
-        return self._hash_bin(self.get_danger_vect() + self.get_food_vect())
+        danger = list(self.get_danger().values())
+        food = list(self.get_food().values())
+        return self._hash_bin(danger + food)
 
     # Implement abstract method
     def choose_action(self, state):
@@ -62,60 +64,30 @@ class QLearningTrainer(ABCTrainer):
         ))
 
     # walls & snake_body & snake_pos
-    def get_danger_vect(self):
-        danger = [0 for i in range(4)]
+    def get_danger(self):
+        danger = dict.fromkeys(list(Direction), 0)
 
         if self.snake_pos[0] < 1:
-            danger[0] = 1
+            danger[Direction.LEFT] = 1
         if self.snake_pos[0] > self.size_x - 2:
-            danger[2] = 1
+            danger[Direction.RIGHT] = 1
         if self.snake_pos[1] < 1:
-            danger[1] = 1
+            danger[Direction.DOWN] = 1
         if self.snake_pos[1] > self.size_y - 2:
-            danger[3] = 1
+            danger[Direction.UP] = 1
 
         for block in self.snake_body[1:]:
-            if (self.snake_pos[0] == block[0] + 1 and
-                    self.snake_pos[1] == block[1]):
-                danger[0] = 1
-            if (self.snake_pos[0] == block[0] - 1 and
-                    self.snake_pos[1] == block[1]):
-                danger[2] = 1
-            if (self.snake_pos[0] == block[0] and
-                    self.snake_pos[1] == block[1] + 1):
-                danger[1] = 1
-            if (self.snake_pos[0] == block[0] and
-                    self.snake_pos[1] == block[1] - 1):
-                danger[3] = 1
+            if self.get_distance(block) <= 1:
+                direction = self.get_direction(block).cast()
+                danger[direction] = 1
 
         return danger
 
     # food_pos & snake_pos
-    def get_food_vect(self):
-        food_arr = [0 for i in range(8)]
-        if self.food_pos[0] == self.snake_pos[0]:
-            if self.food_pos[1] >= self.snake_pos[1]:
-                food_arr[0] = 1
-            else:
-                food_arr[4] = 1
-
-        elif self.food_pos[0] > self.snake_pos[0]:
-            if self.food_pos[1] > self.snake_pos[1]:
-                food_arr[1] = 1
-            elif self.food_pos[1] == self.snake_pos[1]:
-                food_arr[2] = 1
-            else:
-                food_arr[3] = 1
-
-        elif self.food_pos[0] < self.snake_pos[0]:
-            if self.food_pos[1] < self.snake_pos[1]:
-                food_arr[5] = 1
-            elif self.food_pos[1] == self.snake_pos[1]:
-                food_arr[6] = 1
-            else:
-                food_arr[7] = 1
-
-        return food_arr
+    def get_food(self):
+        food = dict.fromkeys(list(ExtendedDirection), 0)
+        food[self.get_direction(self.food_pos)] = 1
+        return food
 
     # returns the corresponding value of the binary array
     def _hash_bin(self, array):

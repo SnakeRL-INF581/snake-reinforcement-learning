@@ -17,3 +17,27 @@ class Direction(Enum):
     @staticmethod
     def random():
         return random.choice(list(Direction))
+
+class ExtendedDirection(Enum):
+    LEFT      = 0
+    UPLEFT    = 1
+    UP        = 2
+    UPRIGHT   = 3
+    RIGHT     = 4
+    DOWNRIGHT = 5
+    DOWN      = 6
+    DOWNLEFT  = 7
+
+    def cast(self):
+        if self.value == 0:
+            return Direction.LEFT
+        if self.value == 2:
+            return Direction.UP
+        if self.value == 4:
+            return Direction.RIGHT
+        if self.value == 6:
+            return Direction.DOWN
+
+    @staticmethod
+    def random():
+        return random.choice(list(ExtendedDirection))

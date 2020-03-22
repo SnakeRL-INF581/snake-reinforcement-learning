@@ -1,5 +1,6 @@
-from utils.direction import Direction
+from utils.direction import *
 import random
+import numpy as np
 from utils.visual import Visual
 from abc import ABC, abstractmethod
 
@@ -54,6 +55,35 @@ class ABCTrainer(ABC):
         self.action = self.choose_action(self.state)
         self.iter += 1
 
+    def get_distance(self, target):
+        v_x = target[0] - self.snake_pos[0]
+        v_y = target[1] - self.snake_pos[1]
+        return np.abs(v_x) + np.abs(v_y)
+
+    def get_direction(self, target):
+        v_x = target[0] - self.snake_pos[0]
+        v_y = target[1] - self.snake_pos[1]
+        if v_x < 0:
+            if v_y < 0:
+                return ExtendedDirection.DOWNLEFT
+            if v_y == 0:
+                return ExtendedDirection.LEFT
+            else:
+                return ExtendedDirection.UPLEFT
+        if v_x == 0:
+            if v_y < 0:
+                return ExtendedDirection.DOWN
+            if v_y == 0:
+                return ExtendedDirection.random()
+            else:
+                return ExtendedDirection.UP
+        else:
+            if v_y < 0:
+                return ExtendedDirection.DOWNRIGHT
+            if v_y == 0:
+                return ExtendedDirection.RIGHT
+            else:
+                return ExtendedDirection.UPRIGHT
 
     @abstractmethod
     def update_hyperparameters(self):

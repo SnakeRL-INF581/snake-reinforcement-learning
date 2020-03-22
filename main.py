@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from utils.helpers import export_q_table, import_q_table
 
 # Reinforcement learning parameters
-epsilon_init = 0.2
+epsilon_init = 0
 epsilon_decay = 0.9
 tau_init = 10
 tau_decay = 0.9
@@ -25,20 +25,22 @@ size_y = 25
 
 learning_rate = 0.00005
 
-# import pretrained q_dict
-# q_dict_imported = import_q_table("pretrained_models/q_table.json")
+# Import pretrained q_dict
+#q_dict_imported = import_q_table("pretrained_models/q_table.json")
 
-trainer = SarsaTrainer(epsilon_init, epsilon_decay, alpha_init, alpha_decay,
-    gamma, decay_rate, size_x, size_y, q_dict=None)
+#trainer = SarsaTrainer(epsilon_init, epsilon_decay, alpha_init, alpha_decay,
+#    gamma, decay_rate, size_x, size_y, q_dict=None)
 
-# trainer = QLearningTrainer(tau_init, tau_decay, alpha_init, alpha_decay,
-#  gamma, decay_rate, size_x, size_y)
+#trainer = QLearningTrainer(tau_init, tau_decay, alpha_init, alpha_decay,
+#    gamma, decay_rate, size_x, size_y)
 
-# trainer = QLearningStateEpsilonTrainer(epsilon_init, epsilon_decay, alpha_init, alpha_decay,
-#      gamma, decay_rate, size_x, size_y)
+#trainer = QLearningStateEpsilonTrainer(epsilon_init, epsilon_decay, 
+#    alpha_init, alpha_decay, gamma, decay_rate, size_x, size_y)
 
-# trainer = DQLTrainer(epsilon_init, epsilon_decay, learning_rate,
-#    gamma, decay_rate, size_x, size_y, load_model_path="pretrained_models/trained_weights.pth")
+# [!] If you load a pretrained model, put epsilon_init = 0
+trainer = DQLTrainer(epsilon_init, epsilon_decay, learning_rate,
+   gamma, decay_rate, size_x, size_y, 
+   load_model_path="pretrained_models/trained_weights.pth")
 
 # Main logic
 iter = 0
@@ -46,9 +48,10 @@ start_time = time.monotonic()
 visual_rate = 2500
 try:
     while True:
-        if (iter % visual_rate >= visual_rate - 1):
+        if (iter % visual_rate >= visual_rate - 3):
             trainer.iterate(visual=True, speed=25)
-        trainer.iterate(visual=False)
+        else:
+            trainer.iterate(visual=True, speed=25)#False)
         iter += 1
 
 except KeyboardInterrupt:
