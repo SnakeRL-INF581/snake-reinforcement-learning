@@ -38,6 +38,7 @@ learning_rate = 0.00005
 #    alpha_init, alpha_decay, gamma, decay_rate, size_x, size_y)
 
 # [!] If you load a pretrained model, put epsilon_init = 0
+epsilon_init = 0
 trainer = DQLTrainer(epsilon_init, epsilon_decay, learning_rate,
    gamma, decay_rate, size_x, size_y, 
    load_model_path="pretrained_models/trained_weights.pth")
@@ -51,7 +52,8 @@ try:
         if (iter % visual_rate >= visual_rate - 3):
             trainer.iterate(visual=True, speed=25)
         else:
-            trainer.iterate(visual=True, speed=25)#False)
+            trainer.iterate(visual=True, speed=25)
+            #trainer.iterate(visual=False)
         iter += 1
 
 except KeyboardInterrupt:

@@ -116,7 +116,7 @@ class ABCTrainer(ABC):
     def iterate(self, visual=False, speed=0, test=False, reward_plus=100,
                     reward_minus=-200, nb_step_max=250):
         if visual and speed == 0:
-            raise Error("Usage: train.iterate(visual=True, speed=speed)")
+            raise Exception("Usage: train.iterate(visual=True, speed=speed)")
 
         self._reinit()
         if self.iter % self.decay_rate == 0:
